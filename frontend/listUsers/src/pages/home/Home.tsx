@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useListUsersState } from "../../store/useListUsersStore";
+import { api } from "../../api/api";
 
 interface IUser {
     id: number;
@@ -10,18 +11,21 @@ interface IUser {
 
 export default function Home() {
 
-    const { getUsers, users } = useListUsersState()
-
-    useEffect(()=> {
-        getUsers()
-    }, [])
+    const { getUsers, users } = useListUsersState();
 
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
-
     const [listUsers, setListUsers] = useState<IUser[]>([]);
 
-    function handleSelectUser(userId: number) {
+    // Depois substitua pelo listId real
+    const listId = 1;
 
+    useEffect(() => {
+        getUsers();
+        console.log(users);
+        
+    }, []);
+
+    function handleSelectUser(userId: number) {
         setSelectedUsers(prev => {
 
             if (prev.includes(userId)) {
@@ -32,39 +36,65 @@ export default function Home() {
         });
     }
 
-    function handleAddUsers() {
+    async function handleAddUsers(listId: number) {
 
-        const usersToAdd = users.filter(user =>
-            selectedUsers.includes(user.id)
-        );
+        try {
 
-        setListUsers(prev => {
+            // Faz a requisição para cada usuário selecionado
+            for (const userId of selectedUsers) {
+                await api.post(`/lists/${listId}/users`, {
+                    userId
+                });
+            }
 
-            const newUsers = usersToAdd.filter(user =>
-                !prev.some(existingUser => existingUser.id === user.id)
+            setSelectedUsers([]);
+
+            // Aqui você pode buscar novamente os usuários da lista
+            // quando tiver uma rota para isso.
+
+        } catch (error) {
+            console.error("Erro ao adicionar usuários:", error);
+        }
+    }
+
+    async function handleToggleStatus(
+        listId: number,
+        userId: number
+    ) {
+
+        try {
+
+            await api.patch(`/lists/${listId}/users/${userId}`);
+
+            setListUsers(prev =>
+                prev.map(user =>
+                    user.id === userId
+                        ? { ...user, active: !user.active }
+                        : user
+                )
             );
 
-            return [...prev, ...newUsers];
-        });
-
-        setSelectedUsers([]);
+        } catch (error) {
+            console.error("Erro ao alterar status:", error);
+        }
     }
 
-    function handleToggleStatus(userId: number) {
+    async function handleRemoveUser(
+        listId: number,
+        userId: number
+    ) {
 
-        setListUsers(prev =>
-            prev.map(user =>
-                user.id === userId
-                    ? { ...user, active: !user.active }
-                    : user
-            )
-        );
-    }
+        try {
 
-    function handleRemoveUser(userId: number) {
-        setListUsers(prev =>
-            prev.filter(user => user.id !== userId)
-        );
+            await api.delete(`/lists/${listId}/users/${userId}`);
+
+            setListUsers(prev =>
+                prev.filter(user => user.id !== userId)
+            );
+
+        } catch (error) {
+            console.error("Erro ao remover usuário:", error);
+        }
     }
 
     return (
@@ -74,24 +104,29 @@ export default function Home() {
 
                 {/* Header */}
                 <div className="mb-8">
+
                     <h1 className="text-3xl font-bold text-gray-800">
                         Minha lista
                     </h1>
 
                     <p className="text-gray-500 mt-2">
-                        Selecione usuários e adicione-os à sua lista.
+                        Selecione usuários e gerencie sua lista.
                     </p>
+
                 </div>
 
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                    {/* Usuários disponíveis */}
+
+                    {/* USUÁRIOS DISPONÍVEIS */}
+
                     <div className="bg-white rounded-2xl shadow-lg p-6">
 
                         <div className="flex items-center justify-between mb-6">
 
                             <div>
+
                                 <h2 className="text-xl font-semibold text-gray-800">
                                     Usuários
                                 </h2>
@@ -99,6 +134,7 @@ export default function Home() {
                                 <p className="text-sm text-gray-500 mt-1">
                                     Selecione os usuários que deseja adicionar
                                 </p>
+
                             </div>
 
                             <span className="text-sm text-gray-500">
@@ -114,13 +150,19 @@ export default function Home() {
 
                                 <div
                                     key={user.id}
-                                    className="flex items-center gap-4 border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition"
+                                    className={`flex items-center gap-4 border rounded-xl p-4 transition ${
+                                        selectedUsers.includes(user.id)
+                                            ? "border-blue-500 bg-blue-50"
+                                            : "border-gray-200 hover:bg-gray-50"
+                                    }`}
                                 >
 
                                     <input
                                         type="checkbox"
                                         checked={selectedUsers.includes(user.id)}
-                                        onChange={() => handleSelectUser(user.id)}
+                                        onChange={() =>
+                                            handleSelectUser(user.id)
+                                        }
                                         className="w-5 h-5 accent-blue-600 cursor-pointer"
                                     />
 
@@ -144,22 +186,27 @@ export default function Home() {
 
 
                         <button
-                            onClick={handleAddUsers}
+                            onClick={() => handleAddUsers(listId)}
                             disabled={selectedUsers.length === 0}
                             className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
                         >
-                            Adicionar selecionados
+                            {selectedUsers.length > 0
+                                ? `Adicionar ${selectedUsers.length} usuário(s)`
+                                : "Adicionar selecionados"
+                            }
                         </button>
 
                     </div>
 
 
-                    {/* Minha lista */}
+                    {/* USUÁRIOS DA LISTA */}
+
                     <div className="bg-white rounded-2xl shadow-lg p-6">
 
                         <div className="flex items-center justify-between mb-6">
 
                             <div>
+
                                 <h2 className="text-xl font-semibold text-gray-800">
                                     Usuários da lista
                                 </h2>
@@ -167,6 +214,7 @@ export default function Home() {
                                 <p className="text-sm text-gray-500 mt-1">
                                     Gerencie os usuários adicionados
                                 </p>
+
                             </div>
 
                             <span className="text-sm text-gray-500">
@@ -179,6 +227,10 @@ export default function Home() {
                         {listUsers.length === 0 ? (
 
                             <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
+
+                                <div className="text-4xl mb-3">
+                                    👥
+                                </div>
 
                                 <p className="text-gray-400">
                                     Nenhum usuário adicionado.
@@ -198,38 +250,58 @@ export default function Home() {
 
                                     <div
                                         key={user.id}
-                                        className="border border-gray-200 rounded-xl p-4"
+                                        className="border border-gray-200 rounded-xl p-4 hover:shadow-sm transition"
                                     >
 
-                                        <div className="flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-4">
 
-                                            <div>
+                                            {/* Informações */}
 
-                                                <p className="font-medium text-gray-800">
+                                            <div className="flex-1 min-w-0">
+
+                                                <p className="font-medium text-gray-800 truncate">
                                                     {user.name}
                                                 </p>
 
-                                                <p className="text-sm text-gray-500">
+                                                <p className="text-sm text-gray-500 truncate">
                                                     {user.email}
                                                 </p>
 
                                             </div>
 
 
+                                            {/* Status */}
+
                                             <button
-                                                onClick={() => handleToggleStatus(user.id)}
+                                                onClick={() =>
+                                                    handleToggleStatus(
+                                                        listId,
+                                                        user.id
+                                                    )
+                                                }
                                                 className={`px-3 py-1 rounded-full text-sm font-medium transition ${
                                                     user.active
                                                         ? "bg-green-100 text-green-700 hover:bg-green-200"
                                                         : "bg-red-100 text-red-700 hover:bg-red-200"
                                                 }`}
                                             >
-                                                {user.active ? "Ativo" : "Inativo"}
+                                                {user.active
+                                                    ? "Ativo"
+                                                    : "Inativo"
+                                                }
                                             </button>
 
+
+                                            {/* Remover */}
+
                                             <button
-                                                onClick={() => handleRemoveUser(user.id)}
-                                                className="px-3 py-1 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition"
+                                                onClick={() =>
+                                                    handleRemoveUser(
+                                                        listId,
+                                                        user.id
+                                                    )
+                                                }
+                                                className="px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition"
                                             >
                                                 Remover
                                             </button>

@@ -24,7 +24,7 @@ export default function Register() {
     } = useForm<IRegisterForm>();
 
     async function handleRegister(data: IRegisterForm) {
-        const response: IRegisterResponse = await api.post("http://localhost:3000/auth/register", data)
+        const response: IRegisterResponse = await api.post("/auth/register", data)
         console.log(response);
     }
 

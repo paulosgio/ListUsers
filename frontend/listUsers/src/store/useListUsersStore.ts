@@ -5,7 +5,6 @@ interface IUser {
     id: number;
     name: string;
     email: string;
-    active: boolean;
 }
 
 interface IlistUsersState {
@@ -31,8 +30,13 @@ export const useListUsersState = create<IlistUsersState>((set)=> ({
 
     },
     getUsers: async ()=> {
-        const response = await api.get(`/users`)
-        console.log(response.data)
-        set({ users: response.data })
+        try {
+            const response = await api.get(`/users`)
+            console.log(response)
+            console.log(response.headers);
+            set({ users: response.data })
+        } catch (error) {
+            console.log(error);
+        }
     }
 }))

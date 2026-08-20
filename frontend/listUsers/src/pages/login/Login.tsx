@@ -19,7 +19,7 @@ export default function Login() {
 
     async function handleLogin(data: ILoginForm) {
         try {
-            const response = await api.post("http://localhost:3000/auth/login", data)
+            const response = await api.post("/auth/login", data)
             localStorage.setItem("token", response.data.token)
             navigate("/home")
         } catch (error) {
