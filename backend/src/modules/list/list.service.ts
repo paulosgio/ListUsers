@@ -43,4 +43,8 @@ export class ListService {
 
         return await this.listRepository.changeStatusRepository(listId, userId, status)
     }
+
+    public async getListUserService(listId: number) {
+        return await this.listRepository.getListUserRepository(listId)
+    }
 }
