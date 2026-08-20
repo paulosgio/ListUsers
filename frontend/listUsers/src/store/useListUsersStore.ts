@@ -1,5 +1,5 @@
-import axios from "axios";
 import { create } from "zustand";
+import { api } from "../api/api";
 
 interface IUser {
     id: number;
@@ -9,17 +9,20 @@ interface IUser {
 }
 
 interface IlistUsersState {
-    user: IUser[] | null
-    getUsers: (listId: number)=> Promise<void>
+    users: IUser[] 
+    getUsers: ()=> Promise<void>
     delete: (listId: number, userId: number)=> Promise<void>
     add: (listId: number, userId: number)=> Promise<void>
     changeStatus: (listId: number, userId: number, status: boolean)=> Promise<void>
 }
 
 export const useListUsersState = create<IlistUsersState>((set)=> ({
-    user: [],
+    users: [],
     add: async (listId: number, userId: number)=> {
-        //set({user: })
+        const response = await api.post(`/lists/${listId}/users`, { userId })
+        set((state)=> ({
+            users: [...state.users, response.data]
+        }))
     },
     changeStatus: async ()=> {
 
@@ -27,7 +30,9 @@ export const useListUsersState = create<IlistUsersState>((set)=> ({
     delete: async ()=> {
 
     },
-    getUsers: async (listId: number)=> {
-        const response = await axios.get(`/`)
+    getUsers: async ()=> {
+        const response = await api.get(`/users`)
+        console.log(response.data)
+        set({ users: response.data })
     }
 }))

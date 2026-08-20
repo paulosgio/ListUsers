@@ -7,17 +7,6 @@ interface ILoginForm {
     password: string;
 }
 
-interface IUser {
-    id: number,
-    name: string, 
-    email: string
-}
-
-interface ILoginResponse {
-    token: string,
-    user: IUser
-}
-
 export default function Login() {
 
     const navigate = useNavigate()
@@ -30,8 +19,8 @@ export default function Login() {
 
     async function handleLogin(data: ILoginForm) {
         try {
-            const response: ILoginResponse = await api.post("http://localhost:3000/auth/login", data)
-            localStorage.setItem("token", response.token)
+            const response = await api.post("http://localhost:3000/auth/login", data)
+            localStorage.setItem("token", response.data.token)
             navigate("/home")
         } catch (error) {
             console.log("Deu erro");
