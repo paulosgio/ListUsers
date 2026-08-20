@@ -45,4 +45,13 @@ export class ListController {
             next(error)
         }
     }
+
+    public async getListUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await this.listService.getListUserService(req.body)
+            return res.status(200).json(response)
+        } catch (error) {
+            next(error)
+        }
+    }
 }

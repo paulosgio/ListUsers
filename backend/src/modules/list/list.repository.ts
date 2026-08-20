@@ -52,4 +52,21 @@ export class ListRepository {
             }
         })
     }
+
+    public async getListUserRepository(listId: number) {
+        return await this.database.client.listUser.findMany({
+            where: {
+                listId
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    }
+                }
+            }
+        })
+    }
 }
