@@ -21,7 +21,7 @@ export default function Login() {
         try {
             const response = await api.post("/auth/login", data)
             localStorage.setItem("token", response.data.token)
-            navigate("/home")
+            navigate(`/home/${response.data.listId}`) //Login retornar token e listId
         } catch (error) {
             console.log("Deu erro");
         }

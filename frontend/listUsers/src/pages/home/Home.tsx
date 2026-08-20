@@ -21,9 +21,13 @@ export default function Home() {
 
     useEffect(() => {
         getUsers();
-        console.log(users);
-        
+        getList(listId)
     }, []);
+
+    async function getList(listId: number) {
+        const response = await api.get("/lists")
+        setListUsers(response.data)
+    }
 
     function handleSelectUser(userId: number) {
         setSelectedUsers(prev => {
@@ -39,8 +43,6 @@ export default function Home() {
     async function handleAddUsers(listId: number) {
 
         try {
-
-            // Faz a requisição para cada usuário selecionado
             for (const userId of selectedUsers) {
                 await api.post(`/lists/${listId}/users`, {
                     userId
@@ -48,10 +50,6 @@ export default function Home() {
             }
 
             setSelectedUsers([]);
-
-            // Aqui você pode buscar novamente os usuários da lista
-            // quando tiver uma rota para isso.
-
         } catch (error) {
             console.error("Erro ao adicionar usuários:", error);
         }

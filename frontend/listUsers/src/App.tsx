@@ -9,7 +9,7 @@ function App() {
     <Routes>
       <Route path="/"  element={<Login/>}/>
       <Route path="/register" element={<Register/>}/>
-      <Route path="/home" element={
+      <Route path="/home/:listId" element={
         <PrivateRoute>
           <Home/>
         </PrivateRoute>
