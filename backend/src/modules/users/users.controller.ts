@@ -9,7 +9,7 @@ export class UserController {
 
         try {
             const data = await this.userService.getUsers()
-            res.status(200).json(data)
+            return res.status(200).json(data)
         } catch (error) {
             next(error)
         }
