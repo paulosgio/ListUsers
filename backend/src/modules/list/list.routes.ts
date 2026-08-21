@@ -17,6 +17,6 @@ export class ListRoutes {
         this.router.post("/:listId/users", authMiddleware, this.listController.addUser.bind(this.listController))
         this.router.delete("/:listId/users/:userId", authMiddleware, this.listController.removeUser.bind(this.listController))
         this.router.patch("/:listId/users/:userId", authMiddleware, this.listController.changeStatus.bind(this.listController))
-        this.router.get("/", authMiddleware, this.listController.getListUser.bind(this.listController))
+        this.router.get("/:listId", authMiddleware, this.listController.getListUser.bind(this.listController))
     }
 }
