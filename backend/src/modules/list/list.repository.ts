@@ -1,4 +1,5 @@
 import { Database } from "../../configs/database/prisma";
+import { NotFoundError } from "../../errors/AppError";
 
 export class ListRepository {
 
@@ -38,7 +39,20 @@ export class ListRepository {
         })
     }
 
-    public async changeStatusRepository(listId: number, userId: number, status: boolean) {
+    public async changeStatusRepository(listId: number, userId: number) {
+
+        const listUser = await this.database.client.listUser.findUnique({
+            where: {
+                listId_userId: {
+                    listId,
+                    userId
+                }
+            }
+        });
+
+        if (!listUser) {
+            throw new NotFoundError("Usuário não pertence à lista");
+        }
 
         return await this.database.client.listUser.update({
             where: {
@@ -48,7 +62,7 @@ export class ListRepository {
                 },
             },
             data: {
-                active: status
+                active: !listUser.active 
             }
         })
     }
