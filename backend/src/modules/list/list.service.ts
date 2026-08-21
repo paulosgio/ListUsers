@@ -45,6 +45,13 @@ export class ListService {
     }
 
     public async getListUserService(listId: number) {
-        return await this.listRepository.getListUserRepository(listId)
+        const listUsers = await this.listRepository.getListUserRepository(listId)
+
+        return listUsers.map((item)=> ({
+            id: item.user.id,
+            name: item.user.name,
+            email: item.user.email,
+            active: item.active
+        }))
     }
 }
