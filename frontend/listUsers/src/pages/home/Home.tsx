@@ -49,6 +49,7 @@ export default function Home() {
                 });
             }
 
+            getList(listId)
             setSelectedUsers([]);
         } catch (error) {
             console.error("Erro ao adicionar usuários:", error);
