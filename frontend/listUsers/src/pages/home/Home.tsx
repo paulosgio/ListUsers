@@ -17,7 +17,6 @@ export default function Home() {
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
     const [listUsers, setListUsers] = useState<IUser[]>([]);
 
-    // Depois substitua pelo listId real
     const { listId } = useParams()
 
     useEffect(() => {
