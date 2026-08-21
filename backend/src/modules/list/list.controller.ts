@@ -48,7 +48,7 @@ export class ListController {
 
     public async getListUser(req: Request, res: Response, next: NextFunction) {
         try {
-            const response = await this.listService.getListUserService(Number(req.params))
+            const response = await this.listService.getListUserService(Number(req.params.listId))
             return res.status(200).json(response)
         } catch (error) {
             next(error)
