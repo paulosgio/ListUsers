@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useListUsersState } from "../../store/useListUsersStore";
 import { api } from "../../api/api";
+import { useParams } from "react-router-dom";
 
 interface IUser {
     id: number;
@@ -17,15 +18,15 @@ export default function Home() {
     const [listUsers, setListUsers] = useState<IUser[]>([]);
 
     // Depois substitua pelo listId real
-    const listId = 1;
+    const { listId } = useParams()
 
     useEffect(() => {
         getUsers();
-        getList(listId)
+        getList(Number(listId))
     }, []);
 
     async function getList(listId: number) {
-        const response = await api.get("/lists")
+        const response = await api.get(`/lists/${listId}`)
         setListUsers(response.data)
     }
 
@@ -184,7 +185,7 @@ export default function Home() {
 
 
                         <button
-                            onClick={() => handleAddUsers(listId)}
+                            onClick={() => handleAddUsers(Number(listId))}
                             disabled={selectedUsers.length === 0}
                             className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
                         >
@@ -273,7 +274,7 @@ export default function Home() {
                                             <button
                                                 onClick={() =>
                                                     handleToggleStatus(
-                                                        listId,
+                                                        Number(listId),
                                                         user.id
                                                     )
                                                 }
@@ -295,7 +296,7 @@ export default function Home() {
                                             <button
                                                 onClick={() =>
                                                     handleRemoveUser(
-                                                        listId,
+                                                        Number(listId),
                                                         user.id
                                                     )
                                                 }

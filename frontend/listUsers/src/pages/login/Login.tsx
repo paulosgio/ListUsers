@@ -20,8 +20,12 @@ export default function Login() {
     async function handleLogin(data: ILoginForm) {
         try {
             const response = await api.post("/auth/login", data)
+            console.log(response.data);
+            
+            const listId = response.data.listId
             localStorage.setItem("token", response.data.token)
-            navigate(`/home/${response.data.listId}`) //Login retornar token e listId
+            localStorage.setItem("listId", response.data.listId)
+            navigate(`/home/${listId}`) 
         } catch (error) {
             console.log("Deu erro");
         }
