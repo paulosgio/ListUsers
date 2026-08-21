@@ -69,4 +69,12 @@ export class ListRepository {
             }
         })
     }
+
+    public async findListByOwnerId(ownerId: number) {
+        return await this.database.client.list.findUnique({
+            where: {
+                ownerId
+            }
+        })
+    }
 }

@@ -6,10 +6,12 @@ import { loginUserDTO } from "./DTO/loginUserDTO";
 import { registerResponseDTO } from "./DTO/registerResponseDTO";
 import { loginResponseDTO } from "./DTO/loginResponseDTO";
 import { ConflictError, NotFoundError, UnauthorizedError } from "../../errors/AppError";
+import { ListRepository } from "../list/list.repository";
 
 export class AuthService {
 
     private authRepository = new AuthRepository()
+    private listRepository = new ListRepository()
 
     private async userAlreadyExist(data: CreateUserDTO) {
 
@@ -55,6 +57,8 @@ export class AuthService {
             throw new UnauthorizedError("Password is incorrect!")
         }
 
+        const list = await this.listRepository.findListByOwnerId(user.id)
+
         const token = jwt.sign(
             {
                 id: user.id
@@ -71,7 +75,8 @@ export class AuthService {
                 id: user.id,
                 name: user.name,
                 email: user.email
-            }
+            },
+            listId: list?.id!
         }
     }
 }

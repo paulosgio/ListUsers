@@ -4,5 +4,6 @@ export interface loginResponseDTO {
         id: number,
         name: string,
         email: string
-    }
+    },
+    listId: number
 }
