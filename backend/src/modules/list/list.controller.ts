@@ -36,9 +36,7 @@ export class ListController {
 
         try {
             const { userId, listId } = req.params
-            const { status } = req.body
-    
-            const data = await this.listService.changeStatusService(Number(listId), Number(userId), Boolean(status))
+            const data = await this.listService.changeStatusService(Number(listId), Number(userId))
     
             return res.status(200).json(data)
         } catch (error) {

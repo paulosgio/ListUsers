@@ -37,11 +37,11 @@ export class ListService {
         return await this.listRepository.removeUserRepository(listId, userId)
     }
 
-    public async changeStatusService(listId: number, userId: number, status: boolean) {
+    public async changeStatusService(listId: number, userId: number) {
 
         await this.assertUserInList(listId, userId)
 
-        return await this.listRepository.changeStatusRepository(listId, userId, status)
+        return await this.listRepository.changeStatusRepository(listId, userId)
     }
 
     public async getListUserService(listId: number) {
