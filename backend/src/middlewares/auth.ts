@@ -1,9 +1,8 @@
-import { AuthenticatedRequestDTO } from "./DTO/AuthenticatedRequestDTO";
-import { NextFunction, Response } from 'express';
+import { NextFunction, Response, Request } from 'express';
 import jwt from "jsonwebtoken";
 
 
-export const authMiddleware = (req: AuthenticatedRequestDTO, res: Response, next: NextFunction)=> {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction)=> {
 
     const authHeader = req.headers.authorization
 
