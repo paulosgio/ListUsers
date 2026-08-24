@@ -25,7 +25,7 @@ export class AuthService {
 
     public async registerService(data: CreateUserDTO): Promise<registerResponseDTO> {
 
-        this.userAlreadyExist(data)
+        await this.userAlreadyExist(data)
 
         const hashedPassword = await bcrypt.hash(data.password, 10)
         const user = await this.authRepository.registerRepository({
