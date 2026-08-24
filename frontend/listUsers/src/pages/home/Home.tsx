@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useListUsersState } from "../../store/useListUsersStore";
 import { api } from "../../api/api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface IUser {
     id: number;
@@ -17,19 +17,40 @@ export default function Home() {
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
     const [listUsers, setListUsers] = useState<IUser[]>([]);
 
-    const { listId } = useParams()
+    const { listId } = useParams();
+    const navigate = useNavigate();
+
+    const id = Number(listId);
 
     useEffect(() => {
+
+        if (!listId) return;
+
         getUsers();
-        getList(Number(listId))
-    }, []);
+        getList(id);
+
+    }, [listId]);
+
+    //const me = users.filter(param => param.id === )
+    
 
     async function getList(listId: number) {
-        const response = await api.get(`/lists/${listId}`)
-        setListUsers(response.data)
+
+        try {
+
+            const response = await api.get(`/lists/${listId}`);
+
+            setListUsers(response.data);
+
+        } catch (error) {
+
+            console.error("Erro ao buscar usuários da lista:", error);
+
+        }
     }
 
     function handleSelectUser(userId: number) {
+
         setSelectedUsers(prev => {
 
             if (prev.includes(userId)) {
@@ -40,60 +61,80 @@ export default function Home() {
         });
     }
 
-    async function handleAddUsers(listId: number) {
+    async function handleAddUsers() {
 
         try {
+
             for (const userId of selectedUsers) {
-                await api.post(`/lists/${listId}/users`, {
+
+                await api.post(`/lists/${id}/users`, {
                     userId
                 });
+
             }
 
-            getList(listId)
             setSelectedUsers([]);
+
+            await getList(id);
+
         } catch (error) {
+
             console.error("Erro ao adicionar usuários:", error);
+
         }
     }
 
-    async function handleToggleStatus(
-        listId: number,
-        userId: number
-    ) {
+    async function handleToggleStatus(userId: number) {
 
         try {
 
-            await api.patch(`/lists/${listId}/users/${userId}`);
+            const response = await api.patch(
+                `/lists/${id}/users/${userId}`
+            );
+
+            const updatedUser = response.data;
 
             setListUsers(prev =>
                 prev.map(user =>
                     user.id === userId
-                        ? { ...user, active: !user.active }
+                        ? {
+                            ...user,
+                            active: updatedUser.active
+                        }
                         : user
                 )
             );
 
         } catch (error) {
+
             console.error("Erro ao alterar status:", error);
+
         }
     }
 
-    async function handleRemoveUser(
-        listId: number,
-        userId: number
-    ) {
+    async function handleRemoveUser(userId: number) {
 
         try {
 
-            await api.delete(`/lists/${listId}/users/${userId}`);
+            await api.delete(`/lists/${id}/users/${userId}`);
 
             setListUsers(prev =>
                 prev.filter(user => user.id !== userId)
             );
 
         } catch (error) {
+
             console.error("Erro ao remover usuário:", error);
+
         }
+    }
+
+    function handleLogout() {
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("listId");
+
+        navigate("/");
     }
 
     return (
@@ -101,24 +142,56 @@ export default function Home() {
 
             <div className="max-w-6xl mx-auto">
 
-                {/* Header */}
-                <div className="mb-8">
+                <div className="flex items-center justify-between mb-8">
 
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Minha lista
-                    </h1>
+                    <div>
 
-                    <p className="text-gray-500 mt-2">
-                        Selecione usuários e gerencie sua lista.
-                    </p>
+                        <h1 className="text-3xl font-bold text-gray-800">
+                            Minha lista
+                        </h1>
+
+                        <p className="text-gray-500 mt-2">
+                            Selecione usuários e gerencie sua lista.
+                        </p>
+
+                    </div>
+
+                    <div className="flex items-center gap-3">
+
+                        <div className="hidden sm:flex items-center gap-3 bg-white rounded-xl shadow-sm px-4 py-3">
+
+                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <span className="text-blue-600 font-semibold">
+                                    U
+                                </span>
+                            </div>
+
+                            <div>
+
+                                <p className="text-sm font-semibold text-gray-800">
+                                    
+                                </p>
+
+                                <p className="text-xs text-gray-500">
+                                    Lista #{listId}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            onClick={handleLogout}
+                            className="px-4 py-3 bg-white rounded-xl shadow-sm text-red-600 font-medium hover:bg-red-50 transition"
+                        >
+                            Sair
+                        </button>
+
+                    </div>
 
                 </div>
 
-
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
-
-                    {/* USUÁRIOS DISPONÍVEIS */}
 
                     <div className="bg-white rounded-2xl shadow-lg p-6">
 
@@ -185,7 +258,7 @@ export default function Home() {
 
 
                         <button
-                            onClick={() => handleAddUsers(Number(listId))}
+                            onClick={handleAddUsers}
                             disabled={selectedUsers.length === 0}
                             className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
                         >
@@ -196,9 +269,6 @@ export default function Home() {
                         </button>
 
                     </div>
-
-
-                    {/* USUÁRIOS DA LISTA */}
 
                     <div className="bg-white rounded-2xl shadow-lg p-6">
 
@@ -254,8 +324,6 @@ export default function Home() {
 
                                         <div className="flex items-center gap-4">
 
-                                            {/* Informações */}
-
                                             <div className="flex-1 min-w-0">
 
                                                 <p className="font-medium text-gray-800 truncate">
@@ -268,15 +336,9 @@ export default function Home() {
 
                                             </div>
 
-
-                                            {/* Status */}
-
                                             <button
                                                 onClick={() =>
-                                                    handleToggleStatus(
-                                                        Number(listId),
-                                                        user.id
-                                                    )
+                                                    handleToggleStatus(user.id)
                                                 }
                                                 className={`px-3 py-1 rounded-full text-sm font-medium transition ${
                                                     user.active
@@ -290,15 +352,9 @@ export default function Home() {
                                                 }
                                             </button>
 
-
-                                            {/* Remover */}
-
                                             <button
                                                 onClick={() =>
-                                                    handleRemoveUser(
-                                                        Number(listId),
-                                                        user.id
-                                                    )
+                                                    handleRemoveUser(user.id)
                                                 }
                                                 className="px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition"
                                             >
