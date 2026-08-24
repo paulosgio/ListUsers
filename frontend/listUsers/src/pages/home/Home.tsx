@@ -10,12 +10,19 @@ interface IUser {
     active: boolean;
 }
 
+interface IMe {
+    id: number;
+    email: string;
+    name: string;
+}
+
 export default function Home() {
 
     const { getUsers, users } = useListUsersState();
 
     const [selectedUsers, setSelectedUsers] = useState<number[]>([]);
     const [listUsers, setListUsers] = useState<IUser[]>([]);
+    const [me, setMe] = useState<IMe | null>(null)
 
     const { listId } = useParams();
     const navigate = useNavigate();
@@ -28,11 +35,14 @@ export default function Home() {
 
         getUsers();
         getList(id);
+        getMe()
 
     }, [listId]);
 
-    //const me = users.filter(param => param.id === )
-    
+    async function getMe() {
+        const response = await api.get("/auth/me")
+        setMe(response.data)
+    }
 
     async function getList(listId: number) {
 
@@ -171,9 +181,9 @@ export default function Home() {
                                 <p className="text-sm font-semibold text-gray-800">
                                     
                                 </p>
-
+                                    {me?.name}
                                 <p className="text-xs text-gray-500">
-                                    Lista #{listId}
+                                   
                                 </p>
 
                             </div>

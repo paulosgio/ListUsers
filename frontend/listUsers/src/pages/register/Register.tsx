@@ -1,17 +1,12 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { api } from "../../api/api";
+import { useNavigate } from "react-router-dom";
 
 interface IRegisterForm {
     name: string;
     email: string;
     password: string;
-}
-
-interface IRegisterResponse {
-    id: number,
-    email: string,
-    name: string,
-    createdAt: string | Date
 }
 
 export default function Register() {
@@ -22,9 +17,18 @@ export default function Register() {
         formState: { errors }
     } = useForm<IRegisterForm>();
 
+    const navigate = useNavigate()
+
+    const [registered, setRegistered] = useState(false);
+
     async function handleRegister(data: IRegisterForm) {
-        const response: IRegisterResponse = await api.post("/auth/register", data)
-        console.log(response);
+        await api.post("/auth/register", data)
+
+        setRegistered(true)
+
+        setTimeout(() => {
+            navigate("/")
+        }, 2000)
     }
 
     return (
@@ -41,6 +45,12 @@ export default function Register() {
                         Crie sua conta para começar
                     </p>
                 </div>
+
+                {registered && (
+                    <div className="mb-6 rounded-lg bg-green-100 border border-green-300 px-4 py-3 text-center text-green-700">
+                        Conta criada com sucesso! Redirecionando...
+                    </div>
+                )}
 
                 <form
                     onSubmit={handleSubmit(handleRegister)}
