@@ -29,4 +29,17 @@ export class AuthRepository {
             return user
         })
     }
+
+    public async me(id: number) {
+        return await this.database.client.user.findUnique({
+            where: {
+                id
+            },
+            select: {
+                id: true,
+                email: true,
+                name: true
+            }
+        })
+    }
 }

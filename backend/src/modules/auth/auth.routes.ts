@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { AuthController } from "./auth.controller";
+import { authMiddleware } from "../../middlewares/auth";
 
 export class AuthRoutes {
 
@@ -16,5 +17,6 @@ export class AuthRoutes {
 
         this.router.post("/login", this.authController.login.bind(this.authController))
         this.router.post("/register", this.authController.register.bind(this.authController))
+        this.router.get("/me", authMiddleware, this.authController.me.bind(this.authController))
     }
 }

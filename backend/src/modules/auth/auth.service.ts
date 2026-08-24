@@ -7,6 +7,7 @@ import { registerResponseDTO } from "./DTO/registerResponseDTO";
 import { loginResponseDTO } from "./DTO/loginResponseDTO";
 import { ConflictError, NotFoundError, UnauthorizedError } from "../../errors/AppError";
 import { ListRepository } from "../list/list.repository";
+import { meDTO } from "./DTO/meDTO";
 
 export class AuthService {
 
@@ -78,5 +79,16 @@ export class AuthService {
             },
             listId: list?.id!
         }
+    }
+
+    public async me(id: number): Promise<meDTO> {
+
+        const user = await this.authRepository.me(id)
+
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+
+        return user
     }
 }
