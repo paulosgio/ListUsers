@@ -1,5 +1,5 @@
-import { Database } from "../../configs/database/prisma";
-import { NotFoundError } from "../../errors/AppError";
+import { Database } from "../../configs/database/prisma.js";
+import { NotFoundError } from "../../errors/AppError.js";
 
 export class ListRepository {
 

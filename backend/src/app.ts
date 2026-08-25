@@ -1,11 +1,10 @@
 import "dotenv/config";
-import express, { Express, NextFunction } from "express"
-import { Request, Response } from "express";
-import { setupMiddlewares } from "./configs/middlewares";
-import { AuthRoutes } from "./modules/auth/auth.routes";
-import { ListRoutes } from "./modules/list/list.routes";
-import { errorHandler } from "./middlewares/errorHandle";
-import { UserRoutes } from "./modules/users/users.routes";
+import express, { Express } from "express"
+import { setupMiddlewares } from "./configs/middlewares/index.js";
+import { AuthRoutes } from "./modules/auth/auth.routes.js";
+import { ListRoutes } from "./modules/list/list.routes.js";
+import { errorHandler } from "./middlewares/errorHandle.js";
+import { UserRoutes } from "./modules/users/users.routes.js";
 
 export class App {
     private app: Express;

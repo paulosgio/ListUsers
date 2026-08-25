@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { ListController } from "./list.controller";
-import { authMiddleware } from "../../middlewares/auth";
+import { ListController } from "./list.controller.js";
+import { authMiddleware } from "../../middlewares/auth.js";
 
 export class ListRoutes {
 

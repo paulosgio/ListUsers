@@ -1,5 +1,5 @@
-import { ConflictError, NotFoundError } from "../../errors/AppError";
-import { ListRepository } from "./list.repository";
+import { ConflictError, NotFoundError } from "../../errors/AppError.js";
+import { ListRepository } from "./list.repository.js";
 
 export class ListService {
     

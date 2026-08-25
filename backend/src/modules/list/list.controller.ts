@@ -1,4 +1,4 @@
-import { ListService } from "./list.service";
+import { ListService } from "./list.service.js";
 import { NextFunction, Request, Response } from "express";
 
 export class ListController {

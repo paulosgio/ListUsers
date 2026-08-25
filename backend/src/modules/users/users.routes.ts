@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { authMiddleware } from "../../middlewares/auth";
-import { UserController } from "./users.controller";
+import { authMiddleware } from "../../middlewares/auth.js";
+import { UserController } from "./users.controller.js";
 
 export class UserRoutes {
 

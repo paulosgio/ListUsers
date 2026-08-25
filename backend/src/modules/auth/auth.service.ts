@@ -1,13 +1,13 @@
-import { AuthRepository } from "./auth.repository";
-import { CreateUserDTO } from "./DTO/createUserDTO";
+import { AuthRepository } from "./auth.repository.js";
+import { CreateUserDTO } from "./DTO/createUserDTO.js";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken";
-import { loginUserDTO } from "./DTO/loginUserDTO";
-import { registerResponseDTO } from "./DTO/registerResponseDTO";
-import { loginResponseDTO } from "./DTO/loginResponseDTO";
-import { ConflictError, NotFoundError, UnauthorizedError } from "../../errors/AppError";
-import { ListRepository } from "../list/list.repository";
-import { meDTO } from "./DTO/meDTO";
+import { loginUserDTO } from "./DTO/loginUserDTO.js";
+import { registerResponseDTO } from "./DTO/registerResponseDTO.js";
+import { loginResponseDTO } from "./DTO/loginResponseDTO.js";
+import { ConflictError, NotFoundError, UnauthorizedError } from "../../errors/AppError.js";
+import { ListRepository } from "../list/list.repository.js";
+import { meDTO } from "./DTO/meDTO.js";
 
 export class AuthService {
 

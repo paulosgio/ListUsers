@@ -1,5 +1,5 @@
-import { Database } from "../../configs/database/prisma";
-import { CreateUserDTO } from "./DTO/createUserDTO";
+import { Database } from "../../configs/database/prisma.js";
+import { CreateUserDTO } from "./DTO/createUserDTO.js";
 
 export class AuthRepository {
 
